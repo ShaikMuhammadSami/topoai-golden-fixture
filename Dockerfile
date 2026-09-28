@@ -3,7 +3,8 @@ FROM busybox@sha256:b7f3d86d6e84fc17718c48bcde1450807faa2d56704205c697b4bd5df7b9
 COPY --chown=65532:65532 fixture_state.txt /opt/topo/fixture_state.txt
 COPY --chown=65532:65532 www/index.html /www/index.html
 
-RUN test "$(cat /opt/topo/fixture_state.txt)" = "healthy" \
+RUN state="$(cat /opt/topo/fixture_state.txt)" \
+    && case "$state" in healthy|fail) ;; *) exit 64 ;; esac \
     && chmod 0444 /opt/topo/fixture_state.txt /www/index.html
 
 USER 65532:65532
